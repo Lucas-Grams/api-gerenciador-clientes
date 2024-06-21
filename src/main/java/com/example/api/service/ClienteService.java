@@ -69,16 +69,17 @@ public class ClienteService {
             if(cliente == null) return ResponseDTO.ok("Cliente não encontrado");
 
             ClienteDTO clienteDTO = ClienteDTO.builder()
-                    .id(cliente.getId()
-                    ).nome(cliente.getNome()
-                    ).email(cliente.getEmail()
-                    ).ativo(cliente.isAtivo()
-                    ).clienteTags(cliente.getClienteTags().stream().map(ct -> {
+                    .id(cliente.getId())
+                    .nome(cliente.getNome())
+                    .uuid(cliente.getUuid())
+                    .email(cliente.getEmail())
+                    .ativo(cliente.isAtivo())
+                    .clienteTags(cliente.getClienteTags().stream().map(ct -> {
                         return ClienteTagDTO.builder()
                                 .tagId(ct.getTag().getId())
                                 .build();
-                    }).collect(Collectors.toList())
-                    ).build();
+                    }).collect(Collectors.toList()))
+                    .build();
 
             return ResponseDTO.ok(clienteDTO);
         } catch (Exception e) {
@@ -114,8 +115,13 @@ public class ClienteService {
 
             // Atualizar as referências de ClienteTag
             this.clienteTagRepository.deleteByClienteId(clienteSave.getId());
-            if(clienteSave.getClienteTags() != null) clienteSave.getClienteTags().clear();
-            clienteSave.getClienteTags().addAll(clienteTagsAssociadas);
+            if(clienteSave.getClienteTags() != null) {
+                clienteSave.getClienteTags().clear();
+                clienteSave.getClienteTags().addAll(clienteTagsAssociadas);
+            } else {
+                clienteSave.setClienteTags(new ArrayList<>());
+            }
+
 
             // Persistir o cliente atualizado
             clienteSave = clienteRepository.save(clienteSave);
