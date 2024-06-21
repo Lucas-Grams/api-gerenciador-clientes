@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS cliente_tag (
         id BIGSERIAL PRIMARY KEY,
         cliente_id BIGINT NOT NULL,
         tag_id BIGINT NOT NULL,
-        ativo BOOLEAN NOT NULL,
         FOREIGN KEY (cliente_id) REFERENCES cliente(id),
         FOREIGN KEY (tag_id) REFERENCES tag(id)
     );
