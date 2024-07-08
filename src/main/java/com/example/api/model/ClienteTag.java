@@ -1,12 +1,11 @@
 package com.example.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
+import lombok.Builder;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Table(name = "cliente_tag", schema = "public")
 @Entity

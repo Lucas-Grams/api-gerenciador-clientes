@@ -4,17 +4,14 @@ FROM maven:3.9.7-eclipse-temurin-22 AS build
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia todos os arquivos do projeto para o container
+# Copia os arquivos do projeto para o container
 COPY . .
 
-# Lista os arquivos no diretório para debug
-RUN ls -alh
-
 # Verifica permissões e define permissões de execução para o Maven Wrapper
-RUN chmod +x mvnw && ls -alh .mvn/wrapper
+RUN chmod +x mvnw
 
-# Compila o projeto utilizando o Maven diretamente, ignorando os testes, com logging detalhado
-RUN mvn -X clean package -DskipTests
+# Compila o projeto utilizando o Maven Wrapper, ignorando os testes, com logging detalhado
+RUN ./mvnw -X clean package -DskipTests
 
 # Usando a imagem oficial do OpenJDK 22 para rodar o projeto
 FROM eclipse-temurin:22-jdk

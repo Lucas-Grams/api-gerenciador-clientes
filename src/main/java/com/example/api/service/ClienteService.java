@@ -1,36 +1,36 @@
 package com.example.api.service;
 
-import com.example.api.dto.ClienteDTO;
-import com.example.api.dto.ClienteTagDTO;
-import com.example.api.dto.ResponseDTO;
-import com.example.api.model.Cliente;
-import com.example.api.model.ClienteTag;
 import com.example.api.model.Tag;
+import com.example.api.model.Cliente;
+import com.example.api.dto.ClienteDTO;
+import com.example.api.dto.ResponseDTO;
+import com.example.api.model.ClienteTag;
+import com.example.api.dto.ClienteTagDTO;
+import org.springframework.stereotype.Service;
+import com.example.api.repository.TagRepository;
 import com.example.api.repository.ClienteRepository;
 import com.example.api.repository.ClienteTagRepository;
-import com.example.api.repository.TagRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
 
-    private final ClienteRepository clienteRepository;
     private final TagRepository tagRepository;
+    private final ClienteRepository clienteRepository;
     private final ClienteTagRepository clienteTagRepository;
 
     public ClienteService(
-            ClienteRepository clienteRepository,
             TagRepository tagRepository,
+            ClienteRepository clienteRepository,
             ClienteTagRepository clienteTagRepository
     ) {
-        this.clienteRepository = clienteRepository;
         this.tagRepository = tagRepository;
+        this.clienteRepository = clienteRepository;
         this.clienteTagRepository = clienteTagRepository;
     }
 
@@ -52,8 +52,8 @@ public class ClienteService {
                     }).collect(Collectors.toList()))
                     .build());
         });
-        try{
-            if(clientes.isEmpty()) return ResponseDTO.ok("Nenhum cliente encontrada");
+        try {
+            if (clientes.isEmpty()) return ResponseDTO.ok("Nenhum cliente encontrada");
             return ResponseDTO.ok(clientesDTO);
         } catch (Exception e) {
             return ResponseDTO.err("Erro ao buscar clientes");
@@ -66,7 +66,7 @@ public class ClienteService {
             Cliente cliente = clienteRepository.findByUuid(UUID.fromString(uuid))
                     .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-            if(cliente == null) return ResponseDTO.ok("Cliente não encontrado");
+            if (cliente == null) return ResponseDTO.ok("Cliente não encontrado");
 
             ClienteDTO clienteDTO = ClienteDTO.builder()
                     .id(cliente.getId())
@@ -95,10 +95,12 @@ public class ClienteService {
                 clienteSave = clienteRepository.findById(clienteDTO.getId())
                         .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
                 clienteSave.updateFromDTO(clienteDTO);
-                if(!clienteDTO.getClienteTags().isEmpty()) clienteSave = this.setClienteTags(clienteSave, clienteDTO.getClienteTags());
+                if (!clienteDTO.getClienteTags().isEmpty())
+                    clienteSave = this.setClienteTags(clienteSave, clienteDTO.getClienteTags());
             } else {
                 clienteSave = new Cliente(clienteDTO);
-                if(!clienteDTO.getClienteTags().isEmpty()) clienteSave = this.setClienteTags(clienteSave, clienteDTO.getClienteTags());
+                if (!clienteDTO.getClienteTags().isEmpty())
+                    clienteSave = this.setClienteTags(clienteSave, clienteDTO.getClienteTags());
             }
 
             List<ClienteTag> clienteTagsAssociadas = new ArrayList<>();
@@ -113,18 +115,15 @@ public class ClienteService {
                 }
             }
 
-            // Atualizar as referências de ClienteTag
             this.clienteTagRepository.deleteByClienteId(clienteSave.getId());
-            if(clienteSave.getClienteTags() != null) {
+            if (clienteSave.getClienteTags() != null) {
                 clienteSave.getClienteTags().clear();
                 clienteSave.getClienteTags().addAll(clienteTagsAssociadas);
             } else {
                 clienteSave.setClienteTags(new ArrayList<>());
             }
 
-
-            // Persistir o cliente atualizado
-            clienteSave = clienteRepository.save(clienteSave);
+            clienteRepository.save(clienteSave);
 
             String message = (clienteDTO.getId() != null) ? "Cliente atualizado com sucesso" : "Cliente cadastrado com sucesso";
             return ResponseDTO.ok(message);
@@ -148,8 +147,26 @@ public class ClienteService {
         }
     }
 
-    private List<ClienteTag> getClienteTags(Long clienteId) {
-        return this.clienteTagRepository.findByClienteId(clienteId);
+    public ResponseDTO<List<ClienteDTO>> searchClientes(String search) {
+        List<ClienteDTO> clientes = new ArrayList<>();
+        List<Cliente> clientesSearch = clienteRepository.searchClienteByNomeOrEmail(search.toString().toUpperCase(),
+                search.toString().toUpperCase());
+
+        clientesSearch.forEach(cliente -> {
+            clientes.add(ClienteDTO.builder()
+                    .id(cliente.getId())
+                    .uuid(cliente.getUuid())
+                    .nome(cliente.getNome())
+                    .email(cliente.getEmail())
+                    .ativo(cliente.isAtivo())
+                    .clienteTags(cliente.getClienteTags().stream().map(ct -> {
+                        return ClienteTagDTO.builder()
+                                .tagId(ct.getTag().getId())
+                                .build();
+                    }).collect(Collectors.toList()))
+                    .build());
+        });
+        return ResponseDTO.ok(clientes);
     }
 
     private Cliente setClienteTags(Cliente cliente, List<ClienteTagDTO> clienteTags) {

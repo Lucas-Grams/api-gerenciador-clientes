@@ -1,7 +1,7 @@
 package com.example.api.controller;
 
-import com.example.api.dto.ResponseDTO;
 import com.example.api.model.Tag;
+import com.example.api.dto.ResponseDTO;
 import com.example.api.service.TagService;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,9 +1,9 @@
 package com.example.api.service;
 
-import com.example.api.dto.ResponseDTO;
 import com.example.api.model.Tag;
-import com.example.api.repository.TagRepository;
+import com.example.api.dto.ResponseDTO;
 import org.springframework.stereotype.Service;
+import com.example.api.repository.TagRepository;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class TagService {
     public ResponseDTO postTag(Tag tag) {
         try {
             tagRepository.save(tag);
-            return ResponseDTO.ok(tag.getId() != null? "Tag cadastrada com sucesso" : "Tagatualizada com sucesso");
+            return ResponseDTO.ok("Tag salva com sucesso");
         } catch (Exception e) {
             return ResponseDTO.err("Erro ao cadastrar tag");
         }

@@ -1,11 +1,9 @@
 package com.example.api.dto;
 
-import com.example.api.model.ClienteTag;
-import com.example.api.model.Tag;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,5 +25,4 @@ public class ClienteDTO {
     private List<ClienteTagDTO> clienteTags;
 
     private boolean ativo = true;
-
 }

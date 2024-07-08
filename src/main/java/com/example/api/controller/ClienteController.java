@@ -1,7 +1,7 @@
 package com.example.api.controller;
+
 import com.example.api.dto.ClienteDTO;
 import com.example.api.dto.ResponseDTO;
-import com.example.api.model.Cliente;
 import com.example.api.service.ClienteService;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,5 +37,10 @@ public class ClienteController {
     @DeleteMapping("/{uuid}")
     public ResponseDTO deleteCliente(@PathVariable String uuid) {
         return this.clienteService.deleteCliente(uuid);
+    }
+
+    @PostMapping("/search")
+    public ResponseDTO<List<ClienteDTO>> searchClientes(@RequestBody String search) {
+        return this.clienteService.searchClientes(search);
     }
 }

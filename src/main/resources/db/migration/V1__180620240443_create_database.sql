@@ -19,3 +19,6 @@ CREATE TABLE IF NOT EXISTS cliente_tag (
         FOREIGN KEY (cliente_id) REFERENCES cliente(id),
         FOREIGN KEY (tag_id) REFERENCES tag(id)
     );
+
+CREATE EXTENSION IF NOT EXISTS unaccent;
+

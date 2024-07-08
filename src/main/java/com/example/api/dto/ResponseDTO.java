@@ -1,7 +1,5 @@
 package com.example.api.dto;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Value;
 
 @Value
@@ -34,6 +32,5 @@ public class ResponseDTO<T> {
     }
 
     public enum Status { SUCCESS, WARNING, ERROR }
-
 }
 

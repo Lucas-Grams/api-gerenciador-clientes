@@ -1,10 +1,10 @@
 package com.example.api.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.Builder;
+import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Table(name = "tag", schema = "public")
 @Entity
